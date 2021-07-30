@@ -15,7 +15,7 @@ from random import randint
 #tur_wid = 2
 #tur_hei = 0.5
 
-hull_len = randint(4, 8) 
+hull_len = randint(5, 10) 
 hull_wid = hull_len / 4 * 2
 hull_hei = hull_len / 5
 
@@ -56,38 +56,66 @@ def generate_cannon():
     bpy.ops.mesh.inset(thickness=0.02, depth=-tur_hei*2, release_confirm=True)
     bpy.ops.object.mode_set(mode='OBJECT')
 
-def generate_tracks():
-    num_wheels = randint(4, hull_len)
+def generate_wheels():
+    num_wheels = randint(5, hull_len)
 #    wheel_seg = (hull_len - 1) / num_wheels
 #    wheel_radius = (wheel_seg - 0.2) / 2
     wheel_radius = hull_len / (num_wheels + 2)
     wheel_seg = (hull_len - num_wheels * wheel_radius) / (num_wheels)
     
     wheel_x_rear = -0.75 - (hull_len / 2)
-    wheel_x_front = (num_wheels - 1) * wheel_seg
-    wheel_y_left = -0.5 - (hull_wid / 2)
-    wheel_y_right = 0.5 + (hull_wid / 2)
+    wheel_x_front = wheel_x_rear + (num_wheels - 1) * (wheel_seg + wheel_radius * 2)
+    wheel_y_right = -0.5 - (hull_wid / 2)
+    wheel_y_left = 0.5 + (hull_wid / 2)
     wheel_z = -0.5 - (hull_hei / 2)
-    # y_left
-    for i in range(num_wheels):
-        bpy.ops.mesh.primitive_cylinder_add(radius=wheel_radius,
-                                            location=(wheel_x_rear + i * (wheel_seg + wheel_radius*2), wheel_y_left, wheel_z),
-                                            rotation=(np.pi / 2, 0, 0),
-                                            scale=(1, 1, 0.35))
     # y_right
-    for i in range(num_wheels):
+    for i in range(num_wheels - 1):
         bpy.ops.mesh.primitive_cylinder_add(radius=wheel_radius,
                                             location=(wheel_x_rear + i * (wheel_seg + wheel_radius*2), wheel_y_right, wheel_z),
                                             rotation=(np.pi / 2, 0, 0),
                                             scale=(1, 1, 0.35))
+    # y_left
+    for i in range(num_wheels - 1):
+        bpy.ops.mesh.primitive_cylinder_add(radius=wheel_radius,
+                                            location=(wheel_x_rear + i * (wheel_seg + wheel_radius*2), wheel_y_left, wheel_z),
+                                            rotation=(np.pi / 2, 0, 0),
+                                            scale=(1, 1, 0.35))
+    
+    # TODO Guide Wheel not included! 
+    # Guide Wheels:
+    guide_radius = wheel_radius * 2 / 3 
+    guide_x_rear = wheel_x_rear - wheel_radius * 2
+    guide_x_front = wheel_x_front
+    guide_z = wheel_z + wheel_radius * 2 / 3
+    # rear
+    bpy.ops.mesh.primitive_cylinder_add(radius=guide_radius, 
+                                        location=(guide_x_rear, wheel_y_left, guide_z),
+                                        rotation=(np.pi/2,0,0),
+                                        scale=(1,1,0.35))
+    bpy.ops.mesh.primitive_cylinder_add(radius=guide_radius, 
+                                        location=(guide_x_rear, wheel_y_right, guide_z),
+                                        rotation=(np.pi/2,0,0),
+                                        scale=(1,1,0.35))
+    # front
+    bpy.ops.mesh.primitive_cylinder_add(radius=guide_radius, 
+                                        location=(guide_x_front, wheel_y_left, guide_z),
+                                        rotation=(np.pi/2,0,0),
+                                        scale=(1,1,0.35))
+    bpy.ops.mesh.primitive_cylinder_add(radius=guide_radius, 
+                                        location=(guide_x_front, wheel_y_right, guide_z),
+                                        rotation=(np.pi/2,0,0),
+                                        scale=(1,1,0.35))
     
     
 #    print(hull_len, num_wheels, wheel_seg, wheel_radius, wheel_z)
+
+def generate_tracks():
+    pass
 
 
 if __name__ == "__main__":
     generate_hull()
     generate_turret()
     generate_cannon()
-    generate_tracks()
+    generate_wheels()
 
