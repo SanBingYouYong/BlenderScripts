@@ -74,37 +74,185 @@ def generate_wheels():
                                             location=(wheel_x_rear + i * (wheel_seg + wheel_radius*2), wheel_y_right, wheel_z),
                                             rotation=(np.pi / 2, 0, 0),
                                             scale=(1, 1, 0.35))
+        bpy.ops.object.mode_set(mode='EDIT')
+        obj = bpy.context.active_object
+        mes = obj.data
+        bme = bmesh.from_edit_mesh(mes)
+        # alt select: the ring
+        for face in bme.faces:
+            face.select = True
+        bme.faces.ensure_lookup_table()
+        print(len(bme.faces))
+        bme.faces[30].select = False
+    #    bme.faces[30].select = False  # WHY 30???????????????
+        bpy.ops.mesh.inset(thickness=wheel_radius/3, depth=0, release_confirm=True)
+        bpy.ops.mesh.inset(thickness=wheel_radius/12, depth=-wheel_radius/3, release_confirm=True)
+        # select the outer surface
+        for face in bme.faces:
+            face.select = False
+        bme.faces.ensure_lookup_table()
+        bme.faces[30].select = True
+        bpy.ops.mesh.inset(thickness=wheel_radius/6, depth=0, release_confirm=True)
+        bpy.ops.mesh.inset(thickness=wheel_radius/12, depth=-wheel_radius/6, release_confirm=True)
+        bpy.ops.mesh.inset(thickness=wheel_radius/6, depth=0, release_confirm=True)
+        bpy.ops.mesh.inset(thickness=wheel_radius/6, depth=wheel_radius/6, release_confirm=True)
+        bpy.ops.object.mode_set(mode='OBJECT')
+
     # y_left
     for i in range(num_wheels - 1):
         bpy.ops.mesh.primitive_cylinder_add(radius=wheel_radius,
                                             location=(wheel_x_rear + i * (wheel_seg + wheel_radius*2), wheel_y_left, wheel_z),
                                             rotation=(np.pi / 2, 0, 0),
                                             scale=(1, 1, 0.35))
-    
+        bpy.ops.object.mode_set(mode='EDIT')
+        obj = bpy.context.active_object
+        mes = obj.data
+        bme = bmesh.from_edit_mesh(mes)
+        # alt select: the ring
+        for face in bme.faces:
+            face.select = True
+        bme.faces.ensure_lookup_table()
+        print(len(bme.faces))
+        bme.faces[33].select = False
+    #    bme.faces[30].select = False  # WHY 30???????????????
+        bpy.ops.mesh.inset(thickness=wheel_radius/3, depth=0, release_confirm=True)
+        bpy.ops.mesh.inset(thickness=wheel_radius/12, depth=-wheel_radius/3, release_confirm=True)
+        # select the outer surface
+        for face in bme.faces:
+            face.select = False
+        bme.faces.ensure_lookup_table()
+        bme.faces[33].select = True
+        bpy.ops.mesh.inset(thickness=wheel_radius/6, depth=0, release_confirm=True)
+        bpy.ops.mesh.inset(thickness=wheel_radius/12, depth=-wheel_radius/6, release_confirm=True)
+        bpy.ops.mesh.inset(thickness=wheel_radius/6, depth=0, release_confirm=True)
+        bpy.ops.mesh.inset(thickness=wheel_radius/6, depth=wheel_radius/6, release_confirm=True)
+        bpy.ops.object.mode_set(mode='OBJECT')
+
     # TODO Guide Wheel not included! 
     # Guide Wheels:
     guide_radius = wheel_radius * 2 / 3 
     guide_x_rear = wheel_x_rear - wheel_radius * 2
     guide_x_front = wheel_x_front
     guide_z = wheel_z + wheel_radius * 2 / 3
+    guide_wheels = []
+###############################################################################################
     # rear
     bpy.ops.mesh.primitive_cylinder_add(radius=guide_radius, 
                                         location=(guide_x_rear, wheel_y_left, guide_z),
                                         rotation=(np.pi/2,0,0),
                                         scale=(1,1,0.35))
+    guide_wheels.append(bpy.context.active_object)
+    bpy.ops.object.mode_set(mode='EDIT')
+    obj = bpy.context.active_object
+    mes = obj.data
+    bme = bmesh.from_edit_mesh(mes)
+    # alt select: the ring
+    for face in bme.faces:
+        face.select = True
+    bme.faces.ensure_lookup_table()
+    print(len(bme.faces))
+    bme.faces[33].select = False
+#    bme.faces[30].select = False  # WHY 30???????????????
+    bpy.ops.mesh.inset(thickness=guide_radius/3, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/12, depth=-guide_radius/3, release_confirm=True)
+    # select the outer surface
+    for face in bme.faces:
+        face.select = False
+    bme.faces.ensure_lookup_table()
+    bme.faces[33].select = True
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/12, depth=-guide_radius/6, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=guide_radius/6, release_confirm=True)
+    bpy.ops.object.mode_set(mode='OBJECT')
+###############################################################################################
     bpy.ops.mesh.primitive_cylinder_add(radius=guide_radius, 
                                         location=(guide_x_rear, wheel_y_right, guide_z),
                                         rotation=(np.pi/2,0,0),
                                         scale=(1,1,0.35))
+    guide_wheels.append(bpy.context.active_object)
+    bpy.ops.object.mode_set(mode='EDIT')
+    obj = bpy.context.active_object
+    mes = obj.data
+    bme = bmesh.from_edit_mesh(mes)
+    # alt select: the ring
+    for face in bme.faces:
+        face.select = True
+    bme.faces.ensure_lookup_table()
+    print(len(bme.faces))
+    bme.faces[30].select = False
+#    bme.faces[30].select = False  # WHY 30???????????????
+    bpy.ops.mesh.inset(thickness=guide_radius/3, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/12, depth=-guide_radius/3, release_confirm=True)
+    # select the outer surface
+    for face in bme.faces:
+        face.select = False
+    bme.faces.ensure_lookup_table()
+    bme.faces[30].select = True
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/12, depth=-guide_radius/6, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=guide_radius/6, release_confirm=True)
+    bpy.ops.object.mode_set(mode='OBJECT')
+###############################################################################################
     # front
     bpy.ops.mesh.primitive_cylinder_add(radius=guide_radius, 
                                         location=(guide_x_front, wheel_y_left, guide_z),
                                         rotation=(np.pi/2,0,0),
                                         scale=(1,1,0.35))
+    guide_wheels.append(bpy.context.active_object)
+    bpy.ops.object.mode_set(mode='EDIT')
+    obj = bpy.context.active_object
+    mes = obj.data
+    bme = bmesh.from_edit_mesh(mes)
+    # alt select: the ring
+    for face in bme.faces:
+        face.select = True
+    bme.faces.ensure_lookup_table()
+    print(len(bme.faces))
+    bme.faces[33].select = False
+#    bme.faces[30].select = False  # WHY 30???????????????
+    bpy.ops.mesh.inset(thickness=guide_radius/3, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/12, depth=-guide_radius/3, release_confirm=True)
+    # select the outer surface
+    for face in bme.faces:
+        face.select = False
+    bme.faces.ensure_lookup_table()
+    bme.faces[33].select = True
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/12, depth=-guide_radius/6, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=guide_radius/6, release_confirm=True)
+    bpy.ops.object.mode_set(mode='OBJECT')
+###############################################################################################
     bpy.ops.mesh.primitive_cylinder_add(radius=guide_radius, 
                                         location=(guide_x_front, wheel_y_right, guide_z),
                                         rotation=(np.pi/2,0,0),
                                         scale=(1,1,0.35))
+    guide_wheels.append(bpy.context.active_object)
+    bpy.ops.object.mode_set(mode='EDIT')
+    obj = bpy.context.active_object
+    mes = obj.data
+    bme = bmesh.from_edit_mesh(mes)
+    # alt select: the ring
+    for face in bme.faces:
+        face.select = True
+    bme.faces.ensure_lookup_table()
+    print(len(bme.faces))
+    bme.faces[30].select = False
+#    bme.faces[30].select = False  # WHY 30???????????????
+    bpy.ops.mesh.inset(thickness=guide_radius/3, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/12, depth=-guide_radius/3, release_confirm=True)
+    # select the outer surface
+    for face in bme.faces:
+        face.select = False
+    bme.faces.ensure_lookup_table()
+    bme.faces[30].select = True
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/12, depth=-guide_radius/6, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=0, release_confirm=True)
+    bpy.ops.mesh.inset(thickness=guide_radius/6, depth=guide_radius/6, release_confirm=True)
+    bpy.ops.object.mode_set(mode='OBJECT')
     
     
 #    print(hull_len, num_wheels, wheel_seg, wheel_radius, wheel_z)
