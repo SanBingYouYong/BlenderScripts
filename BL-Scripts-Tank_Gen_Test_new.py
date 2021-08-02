@@ -56,7 +56,7 @@ def generate_cannon():
     bpy.ops.mesh.inset(thickness=0.02, depth=-tur_hei*2, release_confirm=True)
     bpy.ops.object.mode_set(mode='OBJECT')
 
-def generate_wheels():
+def generate_wheels_tracks():
     num_wheels = randint(5, hull_len)
 #    wheel_seg = (hull_len - 1) / num_wheels
 #    wheel_radius = (wheel_seg - 0.2) / 2
@@ -64,6 +64,7 @@ def generate_wheels():
     wheel_seg = (hull_len - num_wheels * wheel_radius) / (num_wheels)
     
     wheel_x_rear = -0.75 - (hull_len / 2)
+    # TODO this wheel_x_front needs to be checked
     wheel_x_front = wheel_x_rear + (num_wheels - 1) * (wheel_seg + wheel_radius * 2)
     wheel_y_right = -0.5 - (hull_wid / 2)
     wheel_y_left = 0.5 + (hull_wid / 2)
@@ -253,17 +254,103 @@ def generate_wheels():
     bpy.ops.mesh.inset(thickness=guide_radius/6, depth=0, release_confirm=True)
     bpy.ops.mesh.inset(thickness=guide_radius/6, depth=guide_radius/6, release_confirm=True)
     bpy.ops.object.mode_set(mode='OBJECT')
-    
-    
-#    print(hull_len, num_wheels, wheel_seg, wheel_radius, wheel_z)
+    ############################################################################################
+    ############################################################################################
+    # tracks - down
+    track_len = guide_radius
+    track_wid = guide_radius * 1.5
+    track_hei = guide_radius/4
+    track_x_rear = guide_x_rear + guide_radius/6
+    track_x_down_rear = wheel_x_rear
+    track_x_down_front = wheel_x_front - guide_radius * 2
+    track_y_right = wheel_y_right - guide_radius/6
+    track_y_left = wheel_y_left + guide_radius/6
+    track_z_down = wheel_z - wheel_radius - track_hei / 2   
+    xi = track_x_down_rear
+    while xi <= track_x_down_front - track_len:
+        bpy.ops.mesh.primitive_cube_add(size=1,
+                                        location=(xi, track_y_right, track_z_down),
+                                        scale=(track_len, track_wid, track_hei))
+        xi += track_len
+    # note: quan yi zhi ji, should be modified thoroughly
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(xi, track_y_right, track_z_down),
+                                    scale=(track_len,track_wid,track_hei))
+    # note: quan yi zhi ji, should be modified thoroughly
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(xi + track_len * 2 / 3, track_y_right, track_z_down),
+                                    scale=(track_len / 2,track_wid,track_hei))
+    # tracks - up
+    track_x_up_rear = guide_x_rear
+    track_x_up_front = guide_x_front + track_len
+    track_z_up = guide_z + guide_radius + track_hei / 2
+    xi = track_x_up_rear
+    while xi <= track_x_up_front - track_len:
+        bpy.ops.mesh.primitive_cube_add(size=1,
+                                        location=(xi, track_y_right, track_z_up),
+                                        scale=(track_len,track_wid, track_hei))
+        xi += track_len
+    # note: quan yi zhi ji, should be modified thoroughly
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(xi - track_len/ 3, track_y_right, track_z_up),
+                                    scale=(track_len / 2,track_wid,track_hei))
+    ######################################################################################
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(guide_x_rear - guide_radius - track_hei/2, track_y_right, guide_z),
+                                    scale=(track_len,track_wid,track_hei),
+                                    rotation=(0,np.pi/2,0))
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(guide_x_front + guide_radius + track_hei/2, track_y_right, guide_z),
+                                    scale=(track_len,track_wid,track_hei),
+                                    rotation=(0,np.pi/2,0))
+    ###########################################################
+    # Note: x * cos(45) == x / 2 * sqrt(2)
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(guide_x_rear - (guide_radius + track_hei) / 2 * np.sqrt(2) + track_hei / 2, track_y_right, guide_z + (guide_radius + track_hei) / 2 * np.sqrt(2) - track_hei / 2),
+                                    scale=(track_len,track_wid,track_hei),
+                                    rotation=(0, -np.pi/4, 0))
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(guide_x_rear - (guide_radius + track_hei) / 2 * np.sqrt(2) + track_hei / 2, track_y_right, guide_z - (guide_radius + track_hei) / 2 * np.sqrt(2) + track_hei / 2),
+                                    scale=(track_len,track_wid,track_hei),
+                                    rotation=(0, np.pi/4, 0))
+    # Note: will be gap in the front tracks
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(guide_x_front + (guide_radius + track_hei) / 2 * np.sqrt(2) - track_hei / 2, track_y_right, guide_z + (guide_radius + track_hei) / 2 * np.sqrt(2) - track_hei / 2),
+                                    scale=(track_len,track_wid,track_hei),
+                                    rotation=(0, np.pi/4, 0))
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(guide_x_front + (guide_radius + track_hei) / 2 * np.sqrt(2) - track_hei / 2, track_y_right, guide_z - (guide_radius + track_hei) / 2 * np.sqrt(2) + track_hei / 2),
+                                    scale=(track_len,track_wid,track_hei),
+                                    rotation=(0, -np.pi/4, 0))
+    ###########################################################
+    # the final angled tracks
+    temp_x_diff = (track_x_down_rear - track_len / 2) - (guide_x_rear - track_hei)
+    temp_z_diff = (guide_z - guide_radius - track_hei) - track_z_down
+    temp_third_leg = np.sqrt(temp_x_diff ** 2 + temp_z_diff ** 2)
+    # temp_angle = (np.pi * np.arctan(temp_z_diff/temp_x_diff)) / 180
+    temp_angle = np.arctan(temp_z_diff/temp_x_diff)
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(track_x_down_rear - track_len / 2 - temp_x_diff / 2, track_y_right, track_z_down + temp_z_diff / 2),
+                                    scale=(temp_third_leg,track_wid, track_hei),
+                                    rotation=(0, temp_angle, 0))
 
-def generate_tracks():
-    pass
+    temp_x_diff = (guide_x_front + track_hei) - (track_x_down_front + track_len / 2)
+    temp_z_diff = (guide_z - guide_radius - track_hei) - track_z_down
+    temp_third_leg = np.sqrt(temp_x_diff ** 2 + temp_z_diff ** 2)
+    # temp_angle = (np.pi * np.arctan(temp_z_diff/temp_x_diff)) / 180
+    temp_angle = np.arctan(temp_z_diff/temp_x_diff)
+    bpy.ops.mesh.primitive_cube_add(size=1,
+                                    location=(track_x_down_front + track_len / 2 + temp_x_diff / 2, track_y_right, track_z_down + temp_z_diff / 2),
+                                    scale=(temp_third_leg,track_wid, track_hei),
+                                    rotation=(0, -temp_angle, 0))
+
+    ######################################################################################
+
 
 
 if __name__ == "__main__":
     generate_hull()
     generate_turret()
     generate_cannon()
-    generate_wheels()
+    generate_wheels_tracks()
 
